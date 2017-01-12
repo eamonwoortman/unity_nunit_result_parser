@@ -1,5 +1,6 @@
 import sys
 import xml.etree.ElementTree as ET
+import textwrap
 from utils import get_int_attr
 
 """unity_nunit_parser: a simple console application which parses Unity3D NUnit result files 
@@ -17,7 +18,7 @@ class NUnitParser():
                 res += '{:<10} '
             else:
                 res += '{:<14} '
-        print(res.format(*args))
+        print(textwrap.fill(res.format(*args), 70))
 
 
     # parses the root(test-results) element attributes
@@ -39,19 +40,29 @@ class NUnitParser():
         self.print_result('[Successful]', successful, '[Errors]', errors, '[Total]', total_tests)
         self.print_result('[Not run]', not_run, '[Inconclusive]', inconclusive, '[Skipped]', skipped)
         self.print_result('[Invalid]', invalid)
-        print("")
          
     def parse_test_cases(self, root):
         total_time = 0.0
-        failed_cases = ''
+        failed_cases = {}
 
-        for case in root.findall('test-case'):
-            total_time += case.get('time', 0.0)
+        test_cases = root.findall('test-suite/results/test-case')
+        for case in test_cases:
+            total_time += float(case.get('time', 0.0))
             result = case.get('result')
-            if result is 'Error':
+            if result == 'Error':
                 name = case.get('name')
+                message = case.find('failure/message').text
+                stack_trace = case.find('failure/stack-trace').text
+                failed_cases[name] = (message, stack_trace)
+        
+        self.print_result('[Total time]', "%.2f seconds" % total_time)
+        print("\n")
 
-                failed_cases += ''
+        for key, value in failed_cases.items():
+            print('='*70)
+            self.print_result('[Failed test]', key)
+            self.print_result('[Error]', failed_cases[key][0])
+            self.print_result('[Stack trace]', failed_cases[key][1])
 
 
     def try_parse_xml(self):
@@ -63,7 +74,8 @@ class NUnitParser():
             return
     
         self.parse_headers(root)
-        
+        self.parse_test_cases(root)
+
 
 def main():
     print("Executing Unity NUnit result parser version %s." % __version__)
