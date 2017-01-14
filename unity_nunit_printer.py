@@ -1,23 +1,13 @@
 import sys
 import xml.etree.ElementTree as ET
 import textwrap
-from utils import get_int_attr
+from utils import get_int_attr, print_result, print_wrap
 
 __version__ = "0.1.0"
 _author_ = 'eamonwoortman'
 
 """unity_nunit_printer: a simple console application which parses and prints Unity3D NUnit result files."""
 class NUnitPrinter():
-
-    def print_result(self, *args):
-        res = ''
-        for i in range(0, len(args)):
-            if i % 2:
-                res += '{:<10} '
-            else:
-                res += '{:<14} '
-        print(textwrap.fill(res.format(*args), 70))
-
 
     # parses the test-results element attributes
     def parse_headers(self, root):
@@ -35,9 +25,9 @@ class NUnitPrinter():
     
         successful = (total_tests - errors - failures - invalid - inconclusive)
         
-        self.print_result('[Successful]', successful, '[Errors]', errors, '[Total]', total_tests)
-        self.print_result('[Not run]', not_run, '[Inconclusive]', inconclusive, '[Skipped]', skipped)
-        self.print_result('[Invalid]', invalid)
+        print_result('[Successful]', successful, '[Errors]', errors, '[Total]', total_tests)
+        print_result('[Not run]', not_run, '[Inconclusive]', inconclusive, '[Skipped]', skipped)
+        print_result('[Invalid]', invalid)
          
     def parse_test_cases(self, root):
         total_time = 0.0
