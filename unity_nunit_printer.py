@@ -55,12 +55,12 @@ class NUnitPrinter():
             print('')
             print_wrap('[Stack trace] %s'%failed_cases[key][1].rstrip())
 
-    def try_parse_xml(self):
+    def try_parse_xml(self, xml_string):
         try: 
-            tree = ET.parse('test_files/unit_test_results.xml')
-            root = tree.getroot()
+            root = ET.fromstring(xml_string)
         except Exception as ex:
             print("Could not parse unit_test_results.xml, error: ", ex)
+            print(xml_string)
             return
     
         self.parse_headers(root)
@@ -80,7 +80,7 @@ def read_file():
     if not file.is_file():
         print("Error: could not load file at '%s'" % path)
         return False
-    return file.read_text()
+    return file.read_text('UTF-8')
 
 def print_usage():
     print('Usage: ')
@@ -95,7 +95,7 @@ def main():
         return
 
     parser = NUnitPrinter()
-    parser.try_parse_xml();
+    parser.try_parse_xml(xml_string);
 
 if __name__ == '__main__':
     main()
