@@ -1,6 +1,7 @@
 import sys
 import xml.etree.ElementTree as ET
 import textwrap
+from pathlib import Path
 from utils import get_int_attr, print_result, print_wrap
 
 __version__ = "0.1.0"
@@ -66,10 +67,32 @@ class NUnitPrinter():
         self.parse_test_cases(root)
 
 
+def read_file():
+    if len(sys.argv) == 1:
+        return False
+
+    path = sys.argv[1]
+    if path == '':
+        print("Please provide a valid file path")
+        return False
+
+    file = Path(path)
+    if not file.is_file():
+        print("Error: could not load file at '%s'" % path)
+        return False
+    return file.read_text()
+
+def print_usage():
+    print('Usage: ')
+    print('unity_nunit_printer.py <path_to_nunit_result.xml>')
+
 def main():
-    print("Executing Unity NUnit result printer version %s." % __version__)
-    print("List of argument strings: %s" % sys.argv[1:])
-    print("")
+    print("Executing Unity NUnit result printer version %s.\n" % __version__)
+
+    xml_string = read_file()
+    if xml_string is False:
+        print_usage()
+        return
 
     parser = NUnitPrinter()
     parser.try_parse_xml();
