@@ -43,15 +43,16 @@ class NUnitPrinter():
                 stack_trace = case.find('failure/stack-trace').text
                 failed_cases[name] = (message, stack_trace)
         
-        self.print_result('[Total time]', "%.2f seconds" % total_time)
+        print_result('[Total time]', "%.2f seconds" % total_time)
         print("\n")
 
         for key, value in failed_cases.items():
+            print('='*70)            
+            print_result('Failed test: ', key)
             print('='*70)
-            self.print_result('[Failed test]', key)
-            self.print_result('[Error]', failed_cases[key][0])
-            self.print_result('[Stack trace]', failed_cases[key][1])
-
+            print_wrap('[Error] %s'%failed_cases[key][0].rstrip())
+            print('')
+            print_wrap('[Stack trace] %s'%failed_cases[key][1].rstrip())
 
     def try_parse_xml(self):
         try: 
