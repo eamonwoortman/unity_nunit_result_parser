@@ -15,4 +15,4 @@ If you want to use the Docker image, bind a folder containing the result file an
 
 	docker run -v /home/eamon/nunit-output/:/input \  
 				eamonwoortman/unity_nunit_printer \
-				"/input/unit_test_results.xml"
+				python /app/unity_nunit_printer.py /input/unit_test_results.xml
